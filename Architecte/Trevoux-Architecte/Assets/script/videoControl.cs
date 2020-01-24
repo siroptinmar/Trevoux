@@ -11,6 +11,7 @@ public class videoControl : MonoBehaviour
 	public Sprite pause;
 	private long newFrame;
 	private bool isDraging;
+	public Text timeText;
 
     // Start is called before the first frame update
     void Start()
@@ -23,19 +24,36 @@ public class videoControl : MonoBehaviour
     void Update()
     {
 		var vp = GetComponent<UnityEngine.Video.VideoPlayer>();
+		var sliderValue = vp.frame / (float)vp.frameCount;
+
 		if (vp.isPlaying)
 		{	if (!isDraging) {
-				var sliderValue = vp.frame / (float)vp.frameCount;
+				//var sliderValue = vp.frame / (float)vp.frameCount;
 				frameSlider.SetValueWithoutNotify((float)sliderValue);
+
+				float timer = vp.frame / 29.7f;
+				float frameCount  = vp.frameCount / 29.7f;
+				int minutes = Mathf.FloorToInt(timer / 60F);
+				int seconds = Mathf.FloorToInt(timer - minutes * 60);
+				string niceTime = string.Format("{0:0}:{1:00}", minutes, seconds);
+				
+				int minutesTotal = Mathf.FloorToInt(frameCount / 60F);
+				int secondsTotal = Mathf.FloorToInt(frameCount - minutesTotal * 60);
+				string niceTimeTotal = string.Format("{0:0}:{1:00}", minutesTotal, secondsTotal);
+				timeText.text = niceTime+ " / "+ niceTimeTotal;
+
 			}
-			//else {vp.frame = newFrame;}
+			
 			playPauseButton.GetComponent<Image>().sprite = pause;
 		}
 		else
 		{
-
 			playPauseButton.GetComponent<Image>().sprite = play;
+
 		}
+
+
+
     }
 
 	public void setVolume(float volume)
@@ -48,18 +66,36 @@ public class videoControl : MonoBehaviour
 
 	public void setFrame(float sliderFrame)
 	{	
+
 		var vp = GetComponent<UnityEngine.Video.VideoPlayer>();
+
 		var frame = sliderFrame * vp.frameCount;
 		vp.frame = (long)frame;
 
+		float timer = frame / 29.7f;
+		int minutes = Mathf.FloorToInt(timer / 60F);
+		int seconds = Mathf.FloorToInt(timer - minutes * 60);
+		string niceTime = string.Format("{0:0}:{1:00}", minutes, seconds);
+		
+		float frameCount  = vp.frameCount / 29.7f;
+		int minutesTotal = Mathf.FloorToInt(frameCount / 60F);
+		int secondsTotal = Mathf.FloorToInt(frameCount - minutesTotal * 60);
+		string niceTimeTotal = string.Format("{0:0}:{1:00}", minutesTotal, secondsTotal);
+		timeText.text = niceTime+ " / "+ niceTimeTotal;
 
-		//Debug.Log(vp.GetDirectAudioVolume(0));
+		Debug.Log(niceTime+ " / "+ niceTimeTotal);
 		
 		
 	}
 
 	public void isScrubing (bool isDrag){
 		isDraging = isDrag;
+		var vp = GetComponent<UnityEngine.Video.VideoPlayer>();
+		if (isDrag) {
+			vp.Pause ();
+		} else {
+			vp.Play();
+		}
 	}
 
 	public void playPause()

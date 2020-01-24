@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/Architecte-portrait.unity
+- path: Assets/Scenes/Demolition.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
